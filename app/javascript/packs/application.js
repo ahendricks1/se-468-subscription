@@ -56,8 +56,8 @@ function setupStripe() {
       }
     }
 
-    payment_data.payment_method_data.type = 'card'
-    stripe.createPaymentMethod(payment_data.payment_method_data).then((result) => {
+    data.payment_method_data.type = 'card'
+    stripe.createPaymentMethod(data.payment_method_data).then((result) => {
       if (result.error) {
         displayError.textContent = result.error.message
       } else {
