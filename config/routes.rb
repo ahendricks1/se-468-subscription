@@ -30,7 +30,7 @@ end
   devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
 
   resource :pricing, controller: :pricing
-  resource :subscription
+  resource :sub
   resources :payments
   
   root to: 'home#index'

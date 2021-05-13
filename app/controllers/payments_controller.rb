@@ -9,7 +9,8 @@ class PaymentsController < ApplicationController
   end
   
 
-  private def set_payment_intent
-    @payment_intent = Stripe::PaymentIntent.retrieve(params[:id])
-  end
+  private 
+    def set_payment_intent
+      @payment_intent = Stripe::PaymentIntent.retrieve(params[:id])
+    end
 end

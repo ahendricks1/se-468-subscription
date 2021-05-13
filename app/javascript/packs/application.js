@@ -73,5 +73,5 @@ function addHiddenField(form, name, value) {
   hiddenInput.setAttribute("type", "hidden")
   hiddenInput.setAttribute("name", name)
   hiddenInput.setAttribute("value", value)
-  form.appendchild(hiddenInput)
+  form.appendChild(hiddenInput)
 }

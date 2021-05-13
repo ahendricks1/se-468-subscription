@@ -6,7 +6,7 @@
       <h5><%= plan.name %></h5>
       <h2><%= formatted_amount plan.amount %></h2>
       <div class="mb-3"><small class="text-muted">per <%= plan.interval %></small></div>
-      <%= link_to "Subscribe", new_subscription_path(plan_id: plan.id), class: "btn btn-primary" %>
+      <%= link_to "Subscribe", new_sub_path(plan_id: plan.id), class: "btn btn-primary" %>
     </div>
   <% end %>
 </div>

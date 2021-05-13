@@ -12,7 +12,7 @@ class User < ApplicationRecord
   has_many :charges
 
   def subscribed?
-    subscription && sub.active?
+    subscription && subscription.active?
   end
 
   def subscription
@@ -24,9 +24,28 @@ class User < ApplicationRecord
 
     args = {
       customer: stripe_id,
-      items: [{ plan: plan}],
-      expand: []
-    }
+      items: [{price: plan.stripe_price_id}],
+      expand: ['latest_invoice.payment_intent'],
+      off_session: true,
+    }.merge(options)
+
+    args[:trial_from_plan] = true if !args[:trial_period_days]
+
+    stripe_subscription = Stripe::Subscription.create(args)
+
+    sub = subs.create(
+      stripe_id: stripe_subscription.id,
+      stripe_plan: plan.stripe_id,
+      status: stripe_subscription.status,
+      trial_ends_at: (stripe_subscription.trial_end ? Time.at(stripe_subscription.trial_end) : nil),
+      ends_at: nil,
+    )
+
+    if stripe_subscription.status == "incomplete" && ["requires_action", "requires_payment_method"].include?(stripe_subscription.latest_invoice.payment_intent.status)
+      raise PaymentIncomplete.new(stripe_subscription.latest_invoice.payment_intent), "Subscription requires authenticatoin"
+    end
+    
+    sub
   end
 
   def update_card(payment_method_id)
@@ -35,10 +54,10 @@ class User < ApplicationRecord
     payment_method = Stripe::PaymentMethod.attach(payment_method_id, { customer: stripe_id })
     Stripe::Customer.update(stripe_id, invoice_settings: { default_payment_method: payment_method.id })
     update(
-      card_brand: payment_method.card,
-      card_last4: payment_method.last4,
-      card_exp_month: payment_method.exp_month,
-      card_exp_year: payment_method.exp_year,
+      card_brand: payment_method.card.brand.titleize,
+      card_last4: payment_method.card.last4,
+      card_exp_month: payment_method.card.exp_month,
+      card_exp_year: payment_method.card.exp_year,
     )
   end
 

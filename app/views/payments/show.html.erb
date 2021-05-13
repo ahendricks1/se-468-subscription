@@ -2,7 +2,7 @@
   <h1>Payment Successful</h1>
   <p>This payment was already successfully confirmed.</p>
 
-<% <% elsif @payment_intent.status == "canceled" %>%>
+<% elsif @payment_intent.status == "canceled" %>
   <h1>Payment Canceled</h1>
   <p>This payment was canceled. </p>
 <% else %>
@@ -23,7 +23,7 @@
 
     <div id="card-errors"?></div>
 
-    <div class="form-gropu">
+    <div class="form-group">
       <%= form.submit "Pay #{formatted_amount(@payment_intent.amount)}", class: "btn btn-primary" %>
     </div>
     
