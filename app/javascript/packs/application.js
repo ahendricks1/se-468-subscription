@@ -48,8 +48,8 @@ function setupStripe() {
   if (paymentIntentId) {
     if (form.dataset.status == "requires_action") {
       stripe.confirmCardPayment(paymentIntentId, { setup_future_usage: "off_session"}).then((results) => {
-        if (result.error) {
-          displayError.textContent = result.error.message
+        if (results.error) {
+          displayError.textContent = results.error.message
           form.querySelector("card-details").classList.remove("d-none")
         } else {
           form.submit()
