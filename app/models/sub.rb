@@ -20,4 +20,25 @@ class Sub < ApplicationRecord
   def has_incomplete_payment?
     ["past_due", "incomplete"].include?(status)
   end
+
+  def swap(plan)
+    stripe_sub = stripe_subscription
+    subscription = Stripe::Subscription.update(stripe_id,
+      cancel_at_period_end: false,
+      items: [
+        {
+          id: stripe_sub.items.data[0].id,
+          plan: plan
+        }
+      ]
+    )
+    update(
+      stripe_plan: plan,
+      ends_at: nil
+    )
+  end
+
+  def stripe_subscription
+    Stripe::Subscription.retrieve(stripe_id)
+  end
 end

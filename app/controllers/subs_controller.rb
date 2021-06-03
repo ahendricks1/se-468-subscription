@@ -17,6 +17,17 @@ class SubsController < ApplicationController
     redirect_to payment_path(e.payment_intent.id)
   end
 
+  def edit
+    @sub = current_user.subscription
+    @plans = Plan.all
+  end
+
+  def update
+    @sub = current_user.subscription
+    @sub.swap(@plan.stripe_price_id)
+    redirect_to sub_path, notice: "You have successfully changed plans."
+  end
+
   private
   
     def set_plan
